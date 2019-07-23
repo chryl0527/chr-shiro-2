@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chryl.mapper.GmFunctionMapper">
+    <resultMap id="BaseResultMap" type="com.chryl.po.GmFunction">
+        <id column="fun_id" jdbcType="VARCHAR" property="funId"/>
+        <result column="fun_name" jdbcType="VARCHAR" property="funName"/>
+        <result column="fun_url" jdbcType="VARCHAR" property="funUrl"/>
+        <result column="fun_code" jdbcType="VARCHAR" property="funCode"/>
+        <result column="fun_status" jdbcType="INTEGER" property="funStatus"/>
+        <result column="fun_create_time" jdbcType="TIMESTAMP" property="funCreateTime"/>
+        <result column="fun_update_time" jdbcType="TIMESTAMP" property="funUpdateTime"/>
+        <result column="fun_g_role_id" jdbcType="VARCHAR" property="funGRoleId"/>
+        <result column="fun_description" jdbcType="VARCHAR" property="funDescription"/>
+    </resultMap>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+    fun_id, fun_name, fun_url, fun_code, fun_status, fun_create_time, fun_update_time, 
+    fun_g_role_id, fun_description
+  </sql>
+    <select id="selectByExample" parameterType="com.chryl.po.GmFunctionExample" resultMap="BaseResultMap">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        from gm_function
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from gm_function
+        where fun_id = #{funId,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from gm_function
+    where fun_id = #{funId,jdbcType=VARCHAR}
+  </delete>
+    <delete id="deleteByExample" parameterType="com.chryl.po.GmFunctionExample">
+        delete from gm_function
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="insert" parameterType="com.chryl.po.GmFunction">
+    insert into gm_function (fun_id, fun_name, fun_url, 
+      fun_code, fun_status, fun_create_time, 
+      fun_update_time, fun_g_role_id, fun_description
+      )
+    values (#{funId,jdbcType=VARCHAR}, #{funName,jdbcType=VARCHAR}, #{funUrl,jdbcType=VARCHAR}, 
+      #{funCode,jdbcType=VARCHAR}, #{funStatus,jdbcType=INTEGER}, #{funCreateTime,jdbcType=TIMESTAMP}, 
+      #{funUpdateTime,jdbcType=TIMESTAMP}, #{funGRoleId,jdbcType=VARCHAR}, #{funDescription,jdbcType=VARCHAR}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.chryl.po.GmFunction">
+        insert into gm_function
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="funId != null">
+                fun_id,
+            </if>
+            <if test="funName != null">
+                fun_name,
+            </if>
+            <if test="funUrl != null">
+                fun_url,
+            </if>
+            <if test="funCode != null">
+                fun_code,
+            </if>
+            <if test="funStatus != null">
+                fun_status,
+            </if>
+            <if test="funCreateTime != null">
+                fun_create_time,
+            </if>
+            <if test="funUpdateTime != null">
+                fun_update_time,
+            </if>
+            <if test="funGRoleId != null">
+                fun_g_role_id,
+            </if>
+            <if test="funDescription != null">
+                fun_description,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="funId != null">
+                #{funId,jdbcType=VARCHAR},
+            </if>
+            <if test="funName != null">
+                #{funName,jdbcType=VARCHAR},
+            </if>
+            <if test="funUrl != null">
+                #{funUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="funCode != null">
+                #{funCode,jdbcType=VARCHAR},
+            </if>
+            <if test="funStatus != null">
+                #{funStatus,jdbcType=INTEGER},
+            </if>
+            <if test="funCreateTime != null">
+                #{funCreateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="funUpdateTime != null">
+                #{funUpdateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="funGRoleId != null">
+                #{funGRoleId,jdbcType=VARCHAR},
+            </if>
+            <if test="funDescription != null">
+                #{funDescription,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="com.chryl.po.GmFunctionExample" resultType="java.lang.Long">
+        select count(*) from gm_function
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
+        update gm_function
+        <set>
+            <if test="record.funId != null">
+                fun_id = #{record.funId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.funName != null">
+                fun_name = #{record.funName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.funUrl != null">
+                fun_url = #{record.funUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="record.funCode != null">
+                fun_code = #{record.funCode,jdbcType=VARCHAR},
+            </if>
+            <if test="record.funStatus != null">
+                fun_status = #{record.funStatus,jdbcType=INTEGER},
+            </if>
+            <if test="record.funCreateTime != null">
+                fun_create_time = #{record.funCreateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.funUpdateTime != null">
+                fun_update_time = #{record.funUpdateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.funGRoleId != null">
+                fun_g_role_id = #{record.funGRoleId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.funDescription != null">
+                fun_description = #{record.funDescription,jdbcType=VARCHAR},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update gm_function
+        set fun_id = #{record.funId,jdbcType=VARCHAR},
+        fun_name = #{record.funName,jdbcType=VARCHAR},
+        fun_url = #{record.funUrl,jdbcType=VARCHAR},
+        fun_code = #{record.funCode,jdbcType=VARCHAR},
+        fun_status = #{record.funStatus,jdbcType=INTEGER},
+        fun_create_time = #{record.funCreateTime,jdbcType=TIMESTAMP},
+        fun_update_time = #{record.funUpdateTime,jdbcType=TIMESTAMP},
+        fun_g_role_id = #{record.funGRoleId,jdbcType=VARCHAR},
+        fun_description = #{record.funDescription,jdbcType=VARCHAR}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="com.chryl.po.GmFunction">
+        update gm_function
+        <set>
+            <if test="funName != null">
+                fun_name = #{funName,jdbcType=VARCHAR},
+            </if>
+            <if test="funUrl != null">
+                fun_url = #{funUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="funCode != null">
+                fun_code = #{funCode,jdbcType=VARCHAR},
+            </if>
+            <if test="funStatus != null">
+                fun_status = #{funStatus,jdbcType=INTEGER},
+            </if>
+            <if test="funCreateTime != null">
+                fun_create_time = #{funCreateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="funUpdateTime != null">
+                fun_update_time = #{funUpdateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="funGRoleId != null">
+                fun_g_role_id = #{funGRoleId,jdbcType=VARCHAR},
+            </if>
+            <if test="funDescription != null">
+                fun_description = #{funDescription,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where fun_id = #{funId,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.chryl.po.GmFunction">
+    update gm_function
+    set fun_name = #{funName,jdbcType=VARCHAR},
+      fun_url = #{funUrl,jdbcType=VARCHAR},
+      fun_code = #{funCode,jdbcType=VARCHAR},
+      fun_status = #{funStatus,jdbcType=INTEGER},
+      fun_create_time = #{funCreateTime,jdbcType=TIMESTAMP},
+      fun_update_time = #{funUpdateTime,jdbcType=TIMESTAMP},
+      fun_g_role_id = #{funGRoleId,jdbcType=VARCHAR},
+      fun_description = #{funDescription,jdbcType=VARCHAR}
+    where fun_id = #{funId,jdbcType=VARCHAR}
+  </update>
+
+    <!--  -->
+    <select id="findFunByUserId" parameterType="string" resultMap="BaseResultMap">
+    SELECT
+      DISTINCT
+      f.*
+    FROM
+      gm_user u,gm_role r,gm_function f
+    WHERE
+      u.user_g_role_id = r.role_id AND
+      r.role_id = f.fun_g_role_id AND
+      u.user_id = #{userId,jdbcType=VARCHAR}
+  </select>
+</mapper>
