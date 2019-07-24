@@ -6,9 +6,14 @@ import com.chryl.po.GmUser;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Created By Chr on 2019/7/23.
@@ -24,12 +29,27 @@ public class UserController {
     public Object login(@RequestParam String username, @RequestParam String password) {
         // 进行登录验证
         Subject subject = SecurityUtils.getSubject();
-        // 创建验证用的令牌对象
-        UsernamePasswordToken token = new UsernamePasswordToken(username, password);
+        // 创建验证用的令牌对象,rememberMe通过前端选择框传入
+        UsernamePasswordToken token = new UsernamePasswordToken(username, password, false);
         JSONObject jsonObject = new JSONObject();
         try {
             subject.login(token);
-            boolean flag = subject.isAuthenticated();
+            //#############################
+            boolean remembered = subject.isRemembered();
+
+            System.out.println("是否记住:" + remembered);
+            Session session = subject.getSession();
+            Serializable id = session.getId();
+            System.out.println(id);
+            Date startTimestamp = session.getStartTimestamp();
+            System.out.println("启动时间" + startTimestamp);
+            long timeout = session.getTimeout();
+            System.out.println("timeout:" + timeout);
+            session.touch();
+            Date startTimestam2p = session.getStartTimestamp();
+            System.out.println("更新之后的时间" + startTimestam2p);
+            //#############################
+            boolean flag = subject.isAuthenticated();//是否通过验证
             if (flag) {
                 GmUser gmUser = (GmUser) subject.getPrincipal();
                 jsonObject.put("msg", gmUser);
@@ -67,7 +87,8 @@ public class UserController {
     }
 
     @GetMapping("/insert")
-    @RequiresPermissions("system")
+//    @RequiresPermissions("system")
+    @RequiresRoles("acv")
     public Object insert() {
 
         return "user增加设备";

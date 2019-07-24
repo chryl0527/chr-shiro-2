@@ -1,11 +1,15 @@
 package com.chryl.config;
 
 import com.chryl.realm.MyShiroRealm;
+import com.chryl.session.MySessionManager;
+import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.crazycake.shiro.*;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -70,7 +74,14 @@ public class ShiroConfig {
     @Bean(name = "securityManager")
     public DefaultWebSecurityManager getDefaultWebSecurityManager(@Qualifier("shiroRealm") MyShiroRealm shiroRealm) {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
+        //自定义 realm
         securityManager.setRealm(shiroRealm);
+        // 自定义session管理 使用redis
+        securityManager.setSessionManager(sessionManager());
+        // 自定义缓存实现 使用redis
+        securityManager.setCacheManager(cacheManager());
+        //注入记住我管理器;
+//        securityManager.setRememberMeManager(rememberMeManager());
         return securityManager;
     }
 
@@ -102,6 +113,72 @@ public class ShiroConfig {
         AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new AuthorizationAttributeSourceAdvisor();
         authorizationAttributeSourceAdvisor.setSecurityManager(securityManager);
         return authorizationAttributeSourceAdvisor;
+    }
+
+    //自定义sessionManager
+    @Bean
+    public SessionManager sessionManager() {
+        MySessionManager mySessionManager = new MySessionManager();
+        mySessionManager.setSessionDAO(redisSessionDAO());
+        return mySessionManager;
+    }
+
+    /**
+     * 配置shiro redisManager
+     * <p>
+     * 使用的是shiro-redis开源插件
+     *
+     * @return
+     */
+    @Value("${spring.redis.shiro.host}")
+    private String host;
+    @Value("${spring.redis.shiro.port}")
+    private int port;
+    @Value("${spring.redis.shiro.timeout}")
+    private int timeout;
+    @Value("${spring.redis.shiro.password}")
+    private String password;
+
+    @Bean
+    public RedisManager redisManager() {
+        RedisManager redisManager = new RedisManager();
+        redisManager.setHost(host);
+        redisManager.setPort(port);
+        redisManager.setExpire(1800);// 配置缓存过期时间
+        redisManager.setTimeout(timeout);
+        redisManager.setPassword(password);
+        redisManager.setDatabase(2);
+
+        return redisManager;
+    }
+
+    /**
+     * cacheManager 缓存 redis实现,被redisManager管理
+     * <p>
+     * 使用的是shiro-redis开源插件
+     *
+     * @return
+     */
+    public RedisCacheManager cacheManager() {
+        RedisCacheManager redisCacheManager = new RedisCacheManager();
+        redisCacheManager.setRedisManager(redisManager());
+        //序列化
+        redisCacheManager.setKeySerializer(new ObjectSerializer());
+        redisCacheManager.setValueSerializer(new ObjectSerializer());
+
+        return redisCacheManager;
+    }
+
+    /**
+     * RedisSessionDAO shiro sessionDao层的实现 通过redis.,被redisManager管理
+     * <p>
+     * 使用的是shiro-redis开源插件
+     */
+    @Bean
+    public RedisSessionDAO redisSessionDAO() {
+        RedisSessionDAO redisSessionDAO = new RedisSessionDAO();
+        redisSessionDAO.setRedisManager(redisManager());
+        return redisSessionDAO;
     }
 
 }
